@@ -49,27 +49,6 @@ void update(GLfloat *vertices, float angles[]) {
     vertices[6*19+1] = cos(angles[6]) / 2;
     vertices[6*20] = sin(angles[7]) / 2;
     vertices[6*20+1] = cos(angles[7]) / 2;
-    /* 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
-    sin(angles[0]) / 2, cos(angles[0]) / 2, 0.0f, 1.0f, 0.0f, 0.0f,
-    sin(angles[1]) / 2, cos(angles[1]) / 2, 0.0f, 1.0f, 0.0f, 0.0f,
-    0.0f, 0.0f, 0.0f, 1.0f, 0.647f, 0.0f,
-    sin(angles[1]) / 2, cos(angles[1]) / 2, 0.0f, 1.0f, 0.647f, 0.0f,
-    sin(angles[2]) / 2, cos(angles[2]) / 2, 0.0f, 1.0f, 0.647f, 0.0f,
-    0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,
-    sin(angles[2]) / 2, cos(angles[2]) / 2, 0.0f, 1.0f, 1.0f, 0.0f,
-    sin(angles[3]) / 2, cos(angles[3]) / 2, 0.0f, 1.0f, 1.0f, 0.0f,
-    0.0f, 0.0f, 0.0f, 0.0f, 0.502f, 0.0f,
-    sin(angles[3]) / 2, cos(angles[3]) / 2, 0.0f, 0.0f, 0.502f, 0.0f,
-    sin(angles[4]) / 2, cos(angles[4]) / 2, 0.0f, 0.0f, 0.502f, 0.0f,
-    0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-    sin(angles[4]) / 2, cos(angles[4]) / 2, 0.0f, 0.0f, 0.0f, 1.0f,
-    sin(angles[5]) / 2, cos(angles[5]) / 2, 0.0f, 0.0f, 0.0f, 1.0f,
-    0.0f, 0.0f, 0.0f, 0.294f, 0.0f, 0.51f,
-    sin(angles[5]) / 2, cos(angles[5]) / 2, 0.0f, 0.294f, 0.0f, 0.51f,
-    sin(angles[6]) / 2, cos(angles[6]) / 2, 0.0f, 0.294f, 0.0f, 0.51f,
-    0.0f, 0.0f, 0.0f, 0.933f, 0.51f, 0.933f,
-    sin(angles[6]) / 2, cos(angles[6]) / 2, 0.0f, 0.933f, 0.51f, 0.933f,
-    sin(angles[7]) / 2, cos(angles[7]) / 2, 0.0f, 0.933f, 0.51f, 0.933f*/
 }
 
 int main(void)
@@ -89,7 +68,7 @@ int main(void)
     GLFWwindow* window;
 
     /* Create a windowed mode window and its OpenGL context */
-    window = glfwCreateWindow(480, 480, "Triagle", NULL, NULL);
+    window = glfwCreateWindow(480, 480, "Triangle", NULL, NULL);
     if (!window)
     {
         glfwTerminate();
