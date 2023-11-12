@@ -1,24 +1,10 @@
+#include <iostream>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <cmath>
-
-const char* vertexShaderSource = "#version 330 core\n"
-"layout (location = 0) in vec3 aPos;\n"
-"layout (location = 1) in vec3 aColor;\n"
-"out vec3 color;\n"
-"void main()\n"
-"{\n"
-"   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-"   color = aColor;\n"
-"}\0"; 
-
-const char* fragmentShaderSource = "#version 330 core\n"
-"out vec4 FragColor;\n"
-"in vec3 color;\n"
-"void main()\n" 
-"{\n"
-"   FragColor = vec4(color, 1.0f);\n"
-"}\0";
+#include "shaderClass.h"
+#include "VBO.h"
+#include "VAO.h"
 
 void update(GLfloat *vertices, float angles[]) {
     vertices[6*1] = sin(angles[0]) / 2;
@@ -75,6 +61,7 @@ int main(void)
         return -1;
     }
 
+    // Create vertices along a circle
     float pi = 2 * acos(0.0);
     float angle = 2 * pi / 7;
     float angles[] = { 0, angle, 2*angle, 3*angle, 4*angle, 5*angle, 6*angle, 7*angle};
@@ -105,42 +92,20 @@ int main(void)
     /* Make the window's context current */
     glfwMakeContextCurrent(window);
 
-    //Load GLAD so it configures OpenGL
+    // Load GLAD so it configures OpenGL
     gladLoadGL();
     // Specify the viewport of OpenGL in the Window
     glViewport(0, 0, 480, 480);
 
-    GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-    glCompileShader(vertexShader);
+    Shader shader = Shader("default.vert", "default.frag");
 
-    GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-    glCompileShader(fragmentShader);
+    VAO vao = VAO();
+    vao.Bind();
 
-    GLuint shaderProgram = glCreateProgram();
-    glAttachShader(shaderProgram, vertexShader);
-    glAttachShader(shaderProgram, fragmentShader);
-    glLinkProgram(shaderProgram);
-
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
-
-    GLuint VAO, VBO;
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-
-    glBindVertexArray(VAO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_DYNAMIC_DRAW);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
-    glEnableVertexAttribArray(0);
-    glEnableVertexAttribArray(1);
-
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
+    VBO vbo = VBO(vertices, sizeof(vertices));
+    vao.LinkAttrib(vbo, 0, 3, GL_FLOAT, 6 * sizeof(float), (void*)0);
+    vao.LinkAttrib(vbo, 1, 3, GL_FLOAT, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+    vbo.Bind();
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
@@ -149,8 +114,7 @@ int main(void)
         glClear(GL_COLOR_BUFFER_BIT);
 
         // Render triagle
-        glUseProgram(shaderProgram);
-        glBindVertexArray(VAO);
+        shader.Activate();
         glDrawArrays(GL_TRIANGLES, 0, 3*7);
 
         // Spin the geometry but incrementing the angles
@@ -160,7 +124,7 @@ int main(void)
             if (angles[i] > 2 * pi) angles[i] = 0;
         }
         update(vertices, angles);
-        glBindBuffer(GL_ARRAY_BUFFER, VBO);
+        vbo.Bind();
         glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_DYNAMIC_DRAW);
 
         /* Swap front and back buffers */
@@ -170,10 +134,12 @@ int main(void)
         glfwPollEvents();
     }
 
-    glDeleteVertexArrays(1, &VAO);
-    glDeleteBuffers(1, &VBO);
-    glDeleteProgram(shaderProgram);
+    vao.Delete();
+    vbo.Delete();
+    shader.Delete();
 
+    // Delete window before ending the program
+    glfwDestroyWindow(window);
     glfwTerminate();
     return 0;
 }
