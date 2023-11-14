@@ -2,6 +2,9 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <stb/stb_image.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <cmath>
 
 #include "shaderClass.h"
@@ -27,7 +30,9 @@ int main(void)
     GLFWwindow* window;
 
     /* Create a windowed mode window and its OpenGL context */
-    window = glfwCreateWindow(480, 480, "Triangle", NULL, NULL);
+    const unsigned int width = 480;
+    const unsigned int height = 480;
+    window = glfwCreateWindow(width, height, "Triangle", NULL, NULL);
     if (!window)
     {
         glfwTerminate();
@@ -43,7 +48,7 @@ int main(void)
     // Load GLAD so it configures OpenGL
     gladLoadGL();
     // Specify the viewport of OpenGL in the Window
-    glViewport(0, 0, 480, 480);
+    glViewport(0, 0, width, height);
 
     Shader shader = Shader("default.vert", "default.frag");
 
@@ -74,6 +79,8 @@ int main(void)
     vao2.Unbind();
     vbo2.Unbind();
 
+    float rotation = 0.0f;
+
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
@@ -82,11 +89,31 @@ int main(void)
 
         // Render triagle
         shader.Activate();
+
+        // Initializes matrices so they are not the null matrix
+        glm::mat4 model = glm::mat4(1.0f);
+        glm::mat4 view = glm::mat4(1.0f);
+        glm::mat4 proj = glm::mat4(1.0f);
+
+        rotation += 0.5f;
+        // Assigns different transformations to each matrix
+        model = glm::rotate(model, glm::radians(rotation), glm::vec3(0.0f, 0.0f, -1.0f));
+        view = glm::translate(view, glm::vec3(0.0f, 0.0f, -2.0f));
+        proj = glm::perspective(glm::radians(45.0f), (float)width / height, 0.1f, 100.0f);
+
+        // Outputs the matrices into the Vertex Shader
+        int modelLoc = glGetUniformLocation(shader.ID, "model");
+        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+        int viewLoc = glGetUniformLocation(shader.ID, "view");
+        glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+        int projLoc = glGetUniformLocation(shader.ID, "proj");
+        glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(proj));
+
         // Draw heptagon
         vao.Bind();
         glDrawArrays(GL_TRIANGLES, 0, 3*7);
 
-        // Draw quad
+        // Draw icon
         shader2.Activate();
         // Sets the value of the uniform
         glUniform1i(uniID, 0.5f);
@@ -95,9 +122,9 @@ int main(void)
         glDrawArrays(GL_TRIANGLES, 0, 3 * 2);
 
         // Updating heptagon
-        hep.update();
-        vbo.Bind();
-        vbo.Update(hep.getVertices(), hep.getSizeOf());
+        //hep.update();
+        //vbo.Bind();
+        //vbo.Update(hep.getVertices(), hep.getSizeOf());
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
