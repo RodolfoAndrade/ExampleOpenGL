@@ -135,9 +135,11 @@
   <ItemGroup>
     <ClCompile Include="glad.c" />
     <ClCompile Include="heptagon.cpp" />
+    <ClCompile Include="logo.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="shaderClass.cpp" />
     <ClCompile Include="stb.cpp" />
+    <ClCompile Include="Texture.cpp" />
     <ClCompile Include="VAO.cpp" />
     <ClCompile Include="VBO.cpp" />
   </ItemGroup>
@@ -149,7 +151,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="heptagon.h" />
+    <ClInclude Include="logo.h" />
     <ClInclude Include="shaderClass.h" />
+    <ClInclude Include="Texture.h" />
     <ClInclude Include="VAO.h" />
     <ClInclude Include="VBO.h" />
   </ItemGroup>
