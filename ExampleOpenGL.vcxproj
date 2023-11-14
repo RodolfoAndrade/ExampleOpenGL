@@ -144,6 +144,8 @@
   <ItemGroup>
     <None Include="default.frag" />
     <None Include="default.vert" />
+    <None Include="texture.frag" />
+    <None Include="texture.vert" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="heptagon.h" />
